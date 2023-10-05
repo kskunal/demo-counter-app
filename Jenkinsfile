@@ -1,5 +1,9 @@
 pipeline{
 	agent any
+	tools {
+  maven 'Maven3.9.4'
+}
+
 	stages {
 		stage('Git Checkout'){
 			steps{
@@ -8,5 +12,12 @@ pipeline{
 				}
 			}
 		}
+                stage('Unit Testing'){
+                        steps{
+                                script{
+                                        sh 'mvn test'
+                                }
+                        }
+                }
 	}
 }
