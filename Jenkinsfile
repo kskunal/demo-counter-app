@@ -21,8 +21,9 @@ pipeline{
                 }
 		stage('Intergration  Testing'){                                                                                         steps{                                                                                                                  script{                                                                                                                  sh 'mvn verify -DskipUnitTests'                                                                        }                                                                                                        }                                                                                                     }
                stage('Maven Build'){                                                                                                    steps{                                                                                                                  script{                                                                                                                  sh 'mvn clean install'                                                                                 }                                                                                                        }                                                                                                     }
-               stage('Static code analysis'){                                                                                           steps{                                                                                                                   withSonarQubeEnv(credentialsId: 'Sonar-Token') {
-					sh 'mvn clean pacakge sonar:sonar'
-				}                                                                                                       }                                                                                                     }           
+               stage('Static code analysis'){                                                                                           steps{ 
+script{                                                                                                                  withSonarQubeEnv(credentialsId: 'Sonar-Token') {
+					sh 'mvn clean pacakge sonar:sonar' 
+				}                                }                                                                       }                                                                                                     }           
 	}
 }
