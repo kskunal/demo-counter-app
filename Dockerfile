@@ -8,4 +8,3 @@ WORKDIR /app
 COPY --from=base /app/target/*.jar /app
 RUN ls -lrt
 EXPOSE 8888
-CMD ["java","-jar","*.jar"]
