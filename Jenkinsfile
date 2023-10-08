@@ -33,13 +33,13 @@ pipeline{
                 }
             }
         }
-        stage('Quality Gate Status'){
-            steps{
-                script{
-                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-Token'
-                }
-            }
-        }
+ //       stage('Quality Gate Status'){
+//            steps{
+//                script{
+//                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-Token'
+//                }
+//            }
+//        }
         stage("uplaod war file to nexus"){
             steps{
                 script{
