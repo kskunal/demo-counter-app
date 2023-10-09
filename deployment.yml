@@ -1,0 +1,44 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mydeployment
+  namespace: default
+  labels:
+    app: myspringbootapp
+spec:
+  selector:
+    matchLabels:
+      app: myspringbootapp
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: myspringbootapp
+    spec:
+      containers:
+      - name: myspringbootapp
+        image: ${images}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9099
+          name: myjob
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name:  mydeploymentservice
+spec:
+  selector:
+    app:  myspringbootapp
+  type:  NodePort
+  ports:
+  - name:  applicationport
+    port:  80
+    targetPort:  8080
+    nodePort: 30001
