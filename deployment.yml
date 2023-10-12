@@ -40,5 +40,5 @@ spec:
   ports:
   - name:  applicationport
     port:  80
-    targetPort:  8080
+    targetPort:  9099
     nodePort: 30001
