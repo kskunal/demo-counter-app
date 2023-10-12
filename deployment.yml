@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: myspringbootapp
-        image: ${images}
+        image: "${images}"
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9099
