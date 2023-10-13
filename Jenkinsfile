@@ -14,7 +14,7 @@ pipeline{
                 sh 'mvn test'
             }
         }
-        stage('Intergration  Testing'){   
+        stage('Intergration  Testing'){
             steps{
                 sh 'mvn verify -DskipUnitTests'
             }
@@ -33,34 +33,34 @@ pipeline{
                 }
             }
         }
- //       stage('Quality Gate Status'){
-//            steps{
-//                script{
-//                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-Token'
-//                }
-//            }
-//        }
+        // stage('Quality Gate Status'){
+        //     steps{
+        //         script{
+        //             waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-Token'
+        //         }
+        //     }
+        // }
         stage("uplaod war file to nexus"){
             steps{
                 script{
                     def readPom = readMavenPom file: 'pom.xml'
                     // switch the repository
                     def nexusrepo=readPom.version.endsWith("SNAPSHOT")? "demo-counter-snapshot" :"demo-counter-release"
-                    nexusArtifactUploader artifacts: 
+                    nexusArtifactUploader artifacts:
                     [
                         [
-                            artifactId: "${readPom.artifactId}", 
-                            classifier: '', 
-                            file: 'target/Uber.jar', 
+                            artifactId: "${readPom.artifactId}",
+                            classifier: '',
+                            file: 'target/Uber.jar',
                             type: 'jar'
                         ]
-                    ], 
-                    credentialsId: 'nexus_id', 
-                    groupId: "${readPom.groupId}", 
-                    nexusUrl: '4.213.70.240:8081', 
-                    nexusVersion: 'nexus3', 
-                    protocol: 'http', 
-                    repository: nexusrepo, 
+                    ],
+                    credentialsId: 'nexus_id',
+                    groupId: "${readPom.groupId}",
+                    nexusUrl: '4.213.70.240:8081',
+                    nexusVersion: 'nexus3',
+                    protocol: 'http',
+                    repository: nexusrepo,
                     version: "${readPom.version}"
                 }
             }
@@ -69,7 +69,7 @@ pipeline{
             steps{
                 script{
                     sh 'docker build -t ksauto82/$JOB_NAME:v1.$BUILD_ID .'
-                    sh 'docker run -d -p 8888:9099 --name $JOB_NAME-$BUILD_ID ksauto82/$JOB_NAME:v1.$BUILD_ID'
+                    // sh 'docker run -d -p 8888:9099 --name $JOB_NAME-$BUILD_ID ksauto82/$JOB_NAME:v1.$BUILD_ID'
                 }
             }
         }
@@ -85,7 +85,18 @@ pipeline{
                 }
             }
         }
-        
+        stage("Deply the image in K8"){
+            steps{
+                script{
+                    def IMAGE_NAME = "ksauto82/demo-counter-app:v1.112"
+                    def deploymentFile = readFile('deployment.yml') // Read the content of the deployment file
+                    def updatedDeploymentFile = deploymentFile.replace('myimage', "${IMAGE_NAME}") // Replace the placeholder
+                    writeFile file: 'deployment.yml', text: updatedDeploymentFile // Write the updated content back to the file
+                    //sh "cat deployment.yml" // Output the updated content of deployment.yaml for debugging
+                    sh 'kubectl apply -f deployment.yml'
+                    
+                }
+            }
+       }
     }
 }
-
