@@ -88,7 +88,7 @@ pipeline{
         stage("Deply the image in K8"){
             steps{
                 script{
-                    def IMAGE_NAME = "ksauto82/demo-counter-app:v1.112"
+                    def IMAGE_NAME = "ksauto82/$JOB_NAME:v1.$BUILD_ID"
                     def deploymentFile = readFile('deployment.yml') // Read the content of the deployment file
                     def updatedDeploymentFile = deploymentFile.replace('myimage', "${IMAGE_NAME}") // Replace the placeholder
                     writeFile file: 'deployment.yml', text: updatedDeploymentFile // Write the updated content back to the file
